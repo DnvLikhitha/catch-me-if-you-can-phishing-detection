@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase, getUserId } from '../config/supabase';
 import StatCard from '../components/StatCard';
+import URLAnalyzer from '../components/URLAnalyzer';
 import { Shield, AlertTriangle, Target, DollarSign, Users, Award } from 'lucide-react';
 import { LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { format, subDays } from 'date-fns';
@@ -125,6 +126,9 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
+      {/* URL Analyzer - Top Section */}
+      <URLAnalyzer />
+      
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
