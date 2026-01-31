@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚠️ Warning - PhishGuard AI</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #1f2937;
+    }
+
+    .warning-container {
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 650px;
+      width: 100%;
+      overflow: hidden;
+      animation: slideUp 0.4s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .warning-header {
+      background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+      color: white;
+      padding: 40px 40px 30px;
+      text-align: center;
+    }
+
+    .warning-icon {
+      font-size: 80px;
+      margin-bottom: 20px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .warning-title {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .warning-subtitle {
+      font-size: 16px;
+      opacity: 0.95;
+      line-height: 1.5;
+    }
+
+    .warning-content {
+      padding: 40px;
+    }
+
+    .threat-score-card {
+      background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+      border: 2px solid #dc2626;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .threat-score {
+      font-size: 56px;
+      font-weight: 800;
+      color: #dc2626;
+      margin-bottom: 8px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .threat-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #991b1b;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .url-display {
+      background: #f3f4f6;
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      word-break: break-all;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      color: #374151;
+      border-left: 4px solid #dc2626;
+    }
+
+    .url-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .reasons-section {
+      margin-bottom: 30px;
+    }
+
+    .reasons-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .reasons-list {
+      list-style: none;
+    }
+
+    .reason-item {
+      background: #fef2f2;
+      padding: 14px 16px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      border-left: 3px solid #dc2626;
+      transition: all 0.2s;
+    }
+
+    .reason-item:hover {
+      background: #fee2e2;
+      transform: translateX(4px);
+    }
+
+    .reason-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .reason-text {
+      font-size: 14px;
+      color: #374151;
+      line-height: 1.6;
+    }
+
+    .info-box {
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      border-left: 4px solid #3b82f6;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+    }
+
+    .info-box-title {
+      font-weight: 700;
+      color: #1e40af;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+    }
+
+    .info-box-text {
+      font-size: 14px;
+      color: #1e3a8a;
+      line-height: 1.6;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 16px 24px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5);
+    }
+
+    .btn-secondary {
+      background: #f3f4f6;
+      color: #374151;
+      border: 2px solid #d1d5db;
+    }
+
+    .btn-secondary:hover {
+      background: #e5e7eb;
+      border-color: #9ca3af;
+      transform: translateY(-2px);
+    }
+
+    .btn-danger {
+      background: transparent;
+      color: #dc2626;
+      border: 2px solid #dc2626;
+      font-size: 14px;
+      margin-top: 16px;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+      color: white;
+    }
+
+    .confidence-meter {
+      margin-top: 20px;
+      padding: 16px;
+      background: #f9fafb;
+      border-radius: 10px;
+    }
+
+    .confidence-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+
+    .confidence-bar {
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .confidence-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #dc2626 0%, #ef4444 100%);
+      border-radius: 4px;
+      transition: width 0.6s ease;
+    }
+
+    .footer {
+      padding: 20px 40px;
+      background: #f9fafb;
+      text-align: center;
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .footer-link {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .footer-link:hover {
+      text-decoration: underline;
+    }
+
+    #proceedConfirmation {
+      display: none;
+      margin-top: 16px;
+      padding: 16px;
+      background: #fef2f2;
+      border: 2px dashed #dc2626;
+      border-radius: 10px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .confirmation-text {
+      font-size: 14px;
+      color: #991b1b;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 640px) {
+      .warning-header {
+        padding: 30px 20px 20px;
+      }
+
+      .warning-title {
+        font-size: 24px;
+      }
+
+      .warning-content {
+        padding: 24px;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .threat-score {
+        font-size: 42px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="warning-container">
+    <div class="warning-header">
+      <div class="warning-icon">🚨</div>
+      <h1 class="warning-title">Potential Phishing Site Detected</h1>
+      <p class="warning-subtitle">
+        PhishGuard AI has identified this website as potentially dangerous.
+        Your credentials and personal information may be at risk.
+      </p>
+    </div>
+
+    <div class="warning-content">
+      <div class="threat-score-card">
+        <div class="threat-score" id="threatScore">--</div>
+        <div class="threat-label" id="riskLevel">High Risk Detected</div>
+      </div>
+
+      <div class="url-display">
+        <div class="url-label">Blocked URL</div>
+        <div id="blockedUrl">Loading...</div>
+      </div>
+
+      <div class="reasons-section">
+        <h2 class="reasons-title">
+          <span>🔍</span>
+          <span>Why was this site flagged?</span>
+        </h2>
+        <ul class="reasons-list" id="reasonsList">
+          <li class="reason-item">
+            <span class="reason-icon">⚠️</span>
+            <span class="reason-text">Loading threat analysis...</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="info-box">
+        <div class="info-box-title">
+          <span>🛡️</span>
+          <span>What PhishGuard AI Does</span>
+        </div>
+        <div class="info-box-text">
+          We analyze URLs using machine learning, threat intelligence databases, and heuristic patterns to protect you from phishing attacks. When a site is flagged, we prevent credential submission to keep your accounts safe.
+        </div>
+      </div>
+
+      <div class="confidence-meter">
+        <div class="confidence-label">Detection Confidence: <span id="confidencePercent">--</span>%</div>
+        <div class="confidence-bar">
+          <div class="confidence-fill" id="confidenceFill" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn btn-primary" id="goBackBtn">
+          <span>←</span>
+          <span>Go Back (Recommended)</span>
+        </button>
+        <button class="btn btn-secondary" id="whitelistBtn">
+          <span>✓</span>
+          <span>I Trust This Site</span>
+        </button>
+      </div>
+
+      <div id="proceedConfirmation">
+        <div class="confirmation-text">
+          ⚠️ Are you absolutely sure? This may put your credentials at risk.
+        </div>
+        <div class="action-buttons">
+          <button class="btn btn-secondary" id="cancelProceedBtn">Cancel</button>
+          <button class="btn btn-danger" id="confirmProceedBtn">
+            Proceed Anyway (Not Recommended)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Protected by <strong>PhishGuard AI</strong> | 
+      <a href="#" class="footer-link" id="reportFalsePositive">Report False Positive</a>
+    </div>
+  </div>
+
+  <script src="warning.js"></script>
+</body>
+</html>

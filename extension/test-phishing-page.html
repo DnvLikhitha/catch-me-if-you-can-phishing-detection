@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fake PayPal Login - Test Page</title>
+    <style>
+        body { font-family: Arial; max-width: 400px; margin: 50px auto; padding: 20px; }
+        input { width: 100%; padding: 10px; margin: 10px 0; }
+        button { width: 100%; padding: 12px; background: #0070ba; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>PayPal Login</h2>
+    <p>This is a TEST page to trigger PhishGuard's credential detection</p>
+    
+    <form id="loginForm" action="https://fake-paypal.com/submit" method="POST">
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Log In</button>
+    </form>
+    
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('If PhishGuard is working, this form should be BLOCKED!');
+        });
+    </script>
+</body>
+</html>
