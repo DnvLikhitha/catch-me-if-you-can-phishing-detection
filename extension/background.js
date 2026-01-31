@@ -36,6 +36,9 @@ function shouldSkipURL(url) {
   // Skip extension install pages
   if (url.includes('chrome.google.com/webstore')) return true;
   
+  // Skip localhost and local development servers
+  if (url.includes('localhost') || url.includes('127.0.0.1') || url.includes('0.0.0.0')) return true;
+  
   return false;
 }
 
@@ -615,6 +618,39 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       } else {
         sendResponse({ success: true, alreadyWhitelisted: true });
       }
+    });
+    return true; // Async response
+  }
+  
+  if (request.action === 'removeFromWhitelist') {
+    // Remove domain from whitelist
+    chrome.storage.local.get('whitelist', (result) => {
+      const whitelist = result.whitelist || [];
+      const index = whitelist.indexOf(request.domain);
+      if (index > -1) {
+        whitelist.splice(index, 1);
+        chrome.storage.local.set({ whitelist }, () => {
+          sendResponse({ success: true, removed: true });
+        });
+      } else {
+        sendResponse({ success: false, notFound: true });
+      }
+    });
+    return true; // Async response
+  }
+  
+  if (request.action === 'getWhitelist') {
+    // Get all whitelisted domains
+    chrome.storage.local.get('whitelist', (result) => {
+      sendResponse({ whitelist: result.whitelist || [] });
+    });
+    return true; // Async response
+  }
+  
+  if (request.action === 'clearWhitelist') {
+    // Clear all whitelisted domains
+    chrome.storage.local.set({ whitelist: [] }, () => {
+      sendResponse({ success: true });
     });
     return true; // Async response
   }
