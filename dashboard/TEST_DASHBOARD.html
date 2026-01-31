@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhishGuard AI - Quick Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .success { color: #10b981; font-weight: bold; }
+        .error { color: #ef4444; font-weight: bold; }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover { background: #2563eb; }
+        pre {
+            background: #1f2937;
+            color: #10b981;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+        .step {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f0f9ff;
+            border-left: 4px solid #3b82f6;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🛡️ PhishGuard AI - Dashboard Test</h1>
+        <p>Follow these steps to verify your dashboard is working:</p>
+    </div>
+
+    <div class="card">
+        <div class="step">
+            <h3>Step 1: Set User ID in LocalStorage</h3>
+            <p>Click this button to set the correct user ID:</p>
+            <button onclick="setUserId()">✅ Set User ID</button>
+            <p id="userId-status"></p>
+        </div>
+
+        <div class="step">
+            <h3>Step 2: Test Supabase Connection</h3>
+            <button onclick="testConnection()">🔌 Test Connection</button>
+            <p id="connection-status"></p>
+        </div>
+
+        <div class="step">
+            <h3>Step 3: Fetch Your Data</h3>
+            <button onclick="fetchData()">📊 Fetch Threat Data</button>
+            <div id="data-status"></div>
+        </div>
+
+        <div class="step">
+            <h3>Step 4: Open Dashboard</h3>
+            <p>If all tests pass, open the dashboard:</p>
+            <button onclick="openDashboard()">🚀 Open Dashboard</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>📝 Current LocalStorage:</h3>
+        <pre id="storage-info">Loading...</pre>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+        const SUPABASE_URL = 'https://ngmsircoglpuafmsbfno.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbXNpcmNvZ2xwdWFmbXNiZm5vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk4MzY3NTgsImV4cCI6MjA4NTQxMjc1OH0.QedPuNP4_FRW_V_GYkYA8bUxacdsuuUWeyeTt_iMepQ';
+        const USER_ID = '9fa8b24d-485f-4ae1-9c04-3c7be43846fb';
+
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Display current localStorage
+        function updateStorageInfo() {
+            const userId = localStorage.getItem('phishguard_user_id');
+            document.getElementById('storage-info').textContent = 
+                `phishguard_user_id: ${userId || 'NOT SET ❌'}`;
+        }
+
+        window.setUserId = function() {
+            localStorage.setItem('phishguard_user_id', USER_ID);
+            document.getElementById('userId-status').innerHTML = 
+                '<span class="success">✅ User ID set successfully!</span><br>' +
+                `<code>${USER_ID}</code>`;
+            updateStorageInfo();
+        };
+
+        window.testConnection = async function() {
+            const statusEl = document.getElementById('connection-status');
+            statusEl.innerHTML = 'Testing...';
+            
+            try {
+                const { data, error } = await supabase
+                    .from('user_accounts')
+                    .select('id, email')
+                    .limit(1);
+
+                if (error) {
+                    statusEl.innerHTML = `<span class="error">❌ Connection failed: ${error.message}</span>`;
+                } else if (!data || data.length === 0) {
+                    statusEl.innerHTML = `<span class="error">❌ No user accounts found. Did you run seed_database.py?</span>`;
+                } else {
+                    statusEl.innerHTML = `<span class="success">✅ Connection successful!</span><br>` +
+                        `Found user: ${data[0].email}`;
+                }
+            } catch (err) {
+                statusEl.innerHTML = `<span class="error">❌ Error: ${err.message}</span>`;
+            }
+        };
+
+        window.fetchData = async function() {
+            const statusEl = document.getElementById('data-status');
+            statusEl.innerHTML = 'Fetching data...';
+            
+            try {
+                const userId = localStorage.getItem('phishguard_user_id');
+                
+                if (!userId) {
+                    statusEl.innerHTML = '<span class="error">❌ Please set User ID first (Step 1)</span>';
+                    return;
+                }
+
+                // Fetch threat logs
+                const { data: threats, error: threatError } = await supabase
+                    .from('threat_logs')
+                    .select('*')
+                    .eq('user_id', userId)
+                    .limit(5);
+
+                if (threatError) {
+                    statusEl.innerHTML = `<span class="error">❌ Error: ${threatError.message}</span>`;
+                    return;
+                }
+
+                // Fetch stats
+                const { data: stats, error: statsError } = await supabase
+                    .from('user_dashboard_stats')
+                    .select('*')
+                    .eq('user_id', userId)
+                    .single();
+
+                if (statsError) {
+                    statusEl.innerHTML = `<span class="error">❌ Stats error: ${statsError.message}</span>`;
+                    return;
+                }
+
+                statusEl.innerHTML = `
+                    <span class="success">✅ Data fetched successfully!</span><br><br>
+                    <strong>Your Stats:</strong><br>
+                    📊 Total Threats: ${stats.total_threats || 0}<br>
+                    🛡️ Blocked: ${stats.threats_blocked || 0}<br>
+                    🔐 Credentials Protected: ${stats.credential_theft_prevented || 0}<br>
+                    ⚠️ Highest Score: ${stats.highest_threat_score || 0}/100<br><br>
+                    <strong>Recent Threats (${threats.length}):</strong><br>
+                    ${threats.map((t, i) => 
+                        `${i+1}. ${t.domain} - Score: ${t.threat_score}/100 (${t.risk_level})`
+                    ).join('<br>')}
+                `;
+            } catch (err) {
+                statusEl.innerHTML = `<span class="error">❌ Error: ${err.message}</span>`;
+            }
+        };
+
+        window.openDashboard = function() {
+            window.location.href = 'http://localhost:5173';
+        };
+
+        // Initialize
+        updateStorageInfo();
+        
+        // Auto-run test if user_id is already set
+        if (localStorage.getItem('phishguard_user_id')) {
+            setTimeout(() => {
+                document.getElementById('userId-status').innerHTML = 
+                    '<span class="success">✅ User ID already set!</span>';
+            }, 500);
+        }
+    </script>
+</body>
+</html>
